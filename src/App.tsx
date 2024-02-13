@@ -29,7 +29,7 @@ import routerBindings, {
   UnsavedChangesNotifier,
   DocumentTitleHandler,
 } from "@refinedev/react-router-v6";
-import dataProvider from "@refinedev/simple-rest";
+import { dataProvider } from "./rest-data-provider";
 import { Header } from "./components/header";
 import { MantineInferencer } from "@refinedev/inferencer/mantine"
 
