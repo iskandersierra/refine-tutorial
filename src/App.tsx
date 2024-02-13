@@ -1,6 +1,5 @@
 import {
   Refine,
-  GitHubBanner,
   WelcomePage,
   Authenticated,
 } from "@refinedev/core";
@@ -10,7 +9,7 @@ import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import {
   AuthPage,
   ErrorComponent,
-  notificationProvider,
+  useNotificationProvider,
   RefineThemes,
   ThemedLayoutV2,
 } from "@refinedev/mantine";
@@ -32,6 +31,7 @@ import routerBindings, {
 } from "@refinedev/react-router-v6";
 import dataProvider from "@refinedev/simple-rest";
 import { Header } from "./components/header";
+import { MantineInferencer } from "@refinedev/inferencer/mantine"
 
 function App() {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -43,9 +43,10 @@ function App() {
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
+  const notificationProvider = useNotificationProvider();
+
   return (
     <BrowserRouter>
-      <GitHubBanner />
       <RefineKbarProvider>
         <ColorSchemeProvider
           colorScheme={colorScheme}
@@ -66,6 +67,15 @@ function App() {
                   dataProvider={dataProvider(
                     "https://api.fake-rest.refine.dev"
                   )}
+                  resources={[
+                    {
+                      name: "blog_posts",
+                      list: "/blog-posts",
+                      show: "blog-posts/show/:id",
+                      create: "blog-posts/create",
+                      edit: "blog-posts/edit/:id",
+                    }
+                  ]}
                   options={{
                     syncWithLocation: true,
                     warnWhenUnsavedChanges: true,
@@ -75,6 +85,13 @@ function App() {
                 >
                   <Routes>
                     <Route index element={<WelcomePage />} />
+                    <Route path="blog-posts">
+                      <Route index element={<MantineInferencer />} />
+                      <Route path="show/:id" element={<MantineInferencer />} />
+                      <Route path="edit/:id" element={<MantineInferencer />} />
+                      <Route path="create" element={<MantineInferencer />} />
+                    </Route>
+                    <Route path="*" element={<ErrorComponent />} />
                   </Routes>
                   <RefineKbar />
                   <UnsavedChangesNotifier />
